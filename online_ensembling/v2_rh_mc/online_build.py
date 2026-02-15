@@ -22,14 +22,11 @@ case_dir = f'{scratch_dir}/hugging/E3SM-MMF_ne4/online_runs/climsim3_ensembles_g
 src_dir  = top_dir+'/nvidia_codes/E3SM_nvlab/' # branch => whannah/mmf/ml-training
 # user_cpp = '-DMMF_ML_TRAINING' # for saving ML variables
 # user_cpp = '-DMMF_NN_EMULATOR -DMMF_NN_EMULATOR_DIAG_PARTIAL -DMMF_NN_EMULATORDEBUG -DTORCH_MMF_NN_EMULATOR_TEST' # NN hybrid test
-# user_cpp = '-DMMF_NN_EMULATOR' # NN hybrid test
+user_cpp = '-DMMF_NN_EMULATOR' # NN hybrid test
 # # src_mod_atm_dir = '/global/homes/s/sungduk/repositories/ClimSim-E3SM-Hybrid/'
-# # old ftorch path below. For some reason, the install folder is located in FTorch not src.
-# ftorch_path = '/global/cfs/cdirs/m4334/shared/FTorch/src/install'
-ftorch_path = '/global/cfs/cdirs/m4334/shared/FTorch/install'
+ftorch_path = '/global/cfs/cdirs/m4334/shared/FTorch/src/install'
 os.environ["FTorch_ROOT"] = ftorch_path
-os.environ["NVCC_WRAPPER_DEFAULT_OPTIONS"] = "-arch=sm_80"
-os.environ["KOKKOS_NVCC_FLAGS"] = "-arch=sm_80"
+
 # RESTART
 runtype = 'branch' # startup, hybrid,  branch
 refdate = '0002-12-30' # only works for branch (and hybrid?)
@@ -91,9 +88,9 @@ if 'GPU' in arch : max_mpi_per_node,atm_nthrds  =  4,8 ; max_task_per_node = 32
 if arch=='CORI'  : max_mpi_per_node,atm_nthrds  = 64,1
 atm_ntasks = max_mpi_per_node*num_nodes
 #---------------------------------------------------------------------------------------------------
+# case_scripts_dir=f'{case_dir}/{case}/case_scripts' 
+case_scripts_dir=f'{case_dir}/{case}' 
 if newcase :
-   # case_scripts_dir=f'{case_dir}/{case}/case_scripts' 
-   case_scripts_dir=f'{case_dir}/{case}' 
    if os.path.isdir(f'{case_dir}/{case}'): exit('\n'+clr.RED+f'This case already exists: \n{case_dir}/{case}'+clr.END+'\n')
    cmd = f'{src_dir}/cime/scripts/create_newcase -case {case} --script-root {case_scripts_dir} -compset {compset} -res {grid}  '
    if arch=='GNUCPU' : cmd += f' -mach pm-cpu -compiler gnu    -pecount {atm_ntasks}x{atm_nthrds} '

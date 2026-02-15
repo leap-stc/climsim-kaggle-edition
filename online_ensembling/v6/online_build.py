@@ -88,9 +88,9 @@ if 'GPU' in arch : max_mpi_per_node,atm_nthrds  =  4,8 ; max_task_per_node = 32
 if arch=='CORI'  : max_mpi_per_node,atm_nthrds  = 64,1
 atm_ntasks = max_mpi_per_node*num_nodes
 #---------------------------------------------------------------------------------------------------
+# case_scripts_dir=f'{case_dir}/{case}/case_scripts' 
+case_scripts_dir=f'{case_dir}/{case}' 
 if newcase :
-   # case_scripts_dir=f'{case_dir}/{case}/case_scripts' 
-   case_scripts_dir=f'{case_dir}/{case}' 
    if os.path.isdir(f'{case_dir}/{case}'): exit('\n'+clr.RED+f'This case already exists: \n{case_dir}/{case}'+clr.END+'\n')
    cmd = f'{src_dir}/cime/scripts/create_newcase -case {case} --script-root {case_scripts_dir} -compset {compset} -res {grid}  '
    if arch=='GNUCPU' : cmd += f' -mach pm-cpu -compiler gnu    -pecount {atm_ntasks}x{atm_nthrds} '
