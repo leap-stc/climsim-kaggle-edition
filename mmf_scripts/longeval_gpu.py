@@ -68,7 +68,7 @@ if debug_mode: case_list.append('debug')
 case='.'.join(case_list)
 #---------------------------------------------------------------------------------------------------
 # MMF_NN_EMULATOR
-f_torch_model = '/pscratch/sd/j/jerrylin/hugging/E3SM-MMF_ne4/saved_models/climsim3_allhands/pao_model_AdamW_restart_1/wrapped/wrapped_model.pt'
+f_torch_model = ''
 
 cb_spinup_step = 5
 f_cb_strato_water_constraint = '.false.'
