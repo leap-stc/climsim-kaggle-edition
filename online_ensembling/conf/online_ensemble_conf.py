@@ -28,9 +28,9 @@ case_prefixes = ['unet_conf_seed_7', \
                  'convnext_conf_seed_7', \
                  'convnext_conf_seed_43', \
                  'convnext_conf_seed_1024', \
-                 'encdec_conf_lstm_seed_7', \
-                 'encdec_conf_lstm_seed_43', \
-                 'encdec_conf_lstm_seed_1024']
+                 'encdec_lstm_conf_seed_7', \
+                 'encdec_lstm_conf_seed_43', \
+                 'encdec_lstm_conf_seed_1024']
 
 wrapped_model_path = '/pscratch/sd/j/jerrylin/hugging/E3SM-MMF_ne4/saved_models/climsim3_ensembles_good/'
 wrapped_models = [wrapped_model_path + 'unet_conf/unet_conf_seed_7/wrapped_model.pt', \
