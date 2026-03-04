@@ -15,9 +15,8 @@ SEEDS = ['7', '43', '1024']
 YEARS_REGEXP = "1-5"
 
 # Target directory and name of the final archive to create
-OUTPUT_DIR = 'subset_runs'
+OUTPUT_DIR = '/pscratch/sd/j/jerrylin/hugging/E3SM-MMF_ne4/online_runs/climsim3_ensembles_good/subset_runs'
 OUTPUT_ARCHIVE = 'subset_runs.tar.gz'
-
 
 def get_case_name(model, seed, folder):
     """
