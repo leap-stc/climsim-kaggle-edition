@@ -8,15 +8,30 @@ BASE_DIR = '/pscratch/sd/j/jerrylin/hugging/E3SM-MMF_ne4/online_runs/climsim3_en
 
 # The specific folders and properties requested
 TARGET_FOLDERS = ['standard', 'conf', 'diff', 'multirep', 'v6']
-MODELS = ['unet', 'pure_resLSTM', 'pao_model', 'convnext', 'encdec_lstm']
+MODELS = ['unet', 'squeezeformer', 'pure_resLSTM', 'pao_model', 'convnext', 'encdec_lstm']
 SEEDS = ['7', '43', '1024']
 
 # Provide a default regex range for years, e.g., 000[1-5] to match the first 5 years
-YEARS_REGEXP = "1-5" 
+YEARS_REGEXP = "1-5"
 
 # Target directory and name of the final archive to create
 OUTPUT_DIR = 'subset_runs'
 OUTPUT_ARCHIVE = 'subset_runs.tar.gz'
+
+
+def get_case_name(model, seed, folder):
+    """
+    Build the case name for a given model, seed, and folder variant.
+
+    For 'standard', case names are just '{model}_seed_{seed}'.
+    For other variants, the variant is appended after the model name:
+    '{model}_{variant}_seed_{seed}'.
+    """
+    if folder == 'standard':
+        return f"{model}_seed_{seed}"
+
+    return f"{model}_{folder}_seed_{seed}"
+
 
 def main():
     if not os.path.exists(OUTPUT_DIR):
@@ -28,38 +43,37 @@ def main():
     for folder in TARGET_FOLDERS:
         for model in MODELS:
             for seed in SEEDS:
-                # Based on the structure observed earlier (e.g., standard/five_year_runs/unet_seed_7)
-                model_name_seed = f"{model}_seed_{seed}"
-                
+                case_name = get_case_name(model, seed, folder)
+
                 # Most folders have intermediate 'five_year_runs'
-                run_dir = os.path.join(BASE_DIR, folder, 'five_year_runs', model_name_seed, 'run')
-                
+                run_dir = os.path.join(BASE_DIR, folder, 'five_year_runs', case_name, 'run')
+
                 # Fallback if 'five_year_runs' doesn't exist just in case
                 if not os.path.exists(run_dir):
-                    run_dir = os.path.join(BASE_DIR, folder, model_name_seed, 'run')
-                
+                    run_dir = os.path.join(BASE_DIR, folder, case_name, 'run')
+
                 if not os.path.exists(run_dir):
-                    print(f"Note: run directory not found for {folder}/{model_name_seed}")
+                    print(f"Note: run directory not found for {folder}/{case_name}")
                     continue
 
-                # Expected pattern: {model_name}_seed_{seed}.eam.h0.000[{years_regexp}]*.nc
-                search_pattern = os.path.join(run_dir, f"{model_name_seed}.eam.h0.000[{YEARS_REGEXP}]*.nc")
+                # Expected pattern: {case_name}.eam.h0.000[{years_regexp}]*.nc
+                search_pattern = os.path.join(run_dir, f"{case_name}.eam.h0.000[{YEARS_REGEXP}]*.nc")
                 matched_files = glob.glob(search_pattern)
 
                 if matched_files:
-                    dest_folder = os.path.join(OUTPUT_DIR, folder, model_name_seed)
+                    dest_folder = os.path.join(OUTPUT_DIR, folder, case_name)
                     os.makedirs(dest_folder, exist_ok=True)
-                    
+
                     for filepath in matched_files:
                         filename = os.path.basename(filepath)
                         dest_path = os.path.join(dest_folder, filename)
-                        
+
                         # Copy the file preserving metadata
                         shutil.copy2(filepath, dest_path)
                         copied_count += 1
-                        
+
     print(f"Successfully copied {copied_count} files.")
-    
+
     if copied_count > 0:
         print(f"Creating archive {OUTPUT_ARCHIVE}...")
         # Use simple tar command to compress the structured directory
@@ -70,4 +84,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
