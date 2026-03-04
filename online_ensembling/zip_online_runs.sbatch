@@ -67,12 +67,13 @@ if [ "$count" -eq 0 ]; then
     exit 0
 fi
 
-echo "Creating ${OUTPUT_ARCHIVE} using pigz with $(nproc) threads..."
+NTHREADS="${SLURM_CPUS_PER_TASK:-$(nproc)}"
+echo "Creating ${OUTPUT_ARCHIVE} using pigz with ${NTHREADS} threads..."
 
 # Use pigz for parallel compression. tar reads from file list and transforms
 # paths so the archive has clean structure: folder/case_name/filename.nc
 # The --transform strips the absolute path prefix per folder variant.
-tar --use-compress-program="pigz -p $(nproc)" \
+tar --use-compress-program="pigz -p ${NTHREADS}" \
     -cf "$OUTPUT_ARCHIVE" \
     --files-from="$FILE_LIST" \
     --transform="s|${BASE_DIR}/\([^/]*/\)\(five_year_runs/\)\?\([^/]*/\)run/|\1\3|"
