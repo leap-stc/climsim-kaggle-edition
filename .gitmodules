@@ -1,0 +1,3 @@
+[submodule "E3SM_nvlab"]
+	path = E3SM_nvlab
+	url = https://github.com/leap-stc/E3SM_nvlab.git
