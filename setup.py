@@ -15,6 +15,7 @@ install_requires = [
     "netCDF4",
     "h5py",
     "tqdm",
+    "zarr",
 ]
 
 # Conditional requirements based on the backend choice
