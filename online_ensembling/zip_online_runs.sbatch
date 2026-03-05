@@ -50,12 +50,21 @@ for folder in "${FOLDERS[@]}"; do
                 continue
             fi
 
-            # Find matching files and write to file list with transform-friendly paths
+            # Find matching h0 files and write to file list with transform-friendly paths
             for f in "${run_dir}/${case_name}".eam.h0.000["${YEARS}"]*.nc; do
                 [ -e "$f" ] || continue
                 echo "$f"
                 count=$((count + 1))
             done
+
+            # Find matching combined precip files if they exist
+            if [ -d "${run_dir}/precip_dir" ]; then
+                for f in "${run_dir}/precip_dir/combined"*.nc; do
+                    [ -e "$f" ] || continue
+                    echo "$f"
+                    count=$((count + 1))
+                done
+            fi
         done
     done
 done > "$FILE_LIST"
@@ -73,10 +82,11 @@ echo "Creating ${OUTPUT_ARCHIVE} using pigz with ${NTHREADS} threads..."
 # Use pigz for parallel compression. tar reads from file list and transforms
 # paths so the archive has clean structure: folder/case_name/filename.nc
 # The --transform strips the absolute path prefix per folder variant.
+STRIPPED_BASE_DIR="${BASE_DIR#/}"
 tar --use-compress-program="pigz -p ${NTHREADS}" \
     -cf "$OUTPUT_ARCHIVE" \
     --files-from="$FILE_LIST" \
-    --transform="s|${BASE_DIR}/\([^/]*/\)\(five_year_runs/\)\?\([^/]*/\)run/|\1\3|"
+    --transform="s|^${STRIPPED_BASE_DIR}/\([^/]*/\)\(five_year_runs/\)\?\([^/]*/\)run/|\1\3|"
 
 archive_size=$(du -h "$OUTPUT_ARCHIVE" | cut -f1)
 echo "Done! Created ${OUTPUT_ARCHIVE} (${archive_size}) with ${count} files."
