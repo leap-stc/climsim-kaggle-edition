@@ -3,7 +3,7 @@
 #SBATCH -A m4334
 #SBATCH -C cpu
 #SBATCH -q regular
-#SBATCH -t 2:00:00
+#SBATCH -t 4:00:00
 #SBATCH --output=zip_online_runs_%j.out
 #SBATCH --error=zip_online_runs_%j.err
 #SBATCH -c 32
